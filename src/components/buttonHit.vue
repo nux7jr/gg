@@ -69,7 +69,7 @@ const props = defineProps({
 
 .hit__icon * {
     transition: all 0.1s;
-    transition-delay: 20ms;
+    transition-delay: 30ms;
 }
 
 .hit__path--active {

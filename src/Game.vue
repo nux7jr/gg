@@ -52,9 +52,9 @@
                             </p>
                             <p class="option__rubin">Рубин</p>
                         </div>
-                        <button class="btn option__reset" @click="resetGame">
-                            НОВАЯ ИГРА
-                            <span class="loader"></span>
+                        <button class="btn option__reset" ref="$resetButton" @click="resetGame">
+                            <span v-if="!isLoading">НОВАЯ ИГРА</span>
+                            <span class="loader" v-if="isLoading"></span>
                         </button>
                     </div>
                     <!-- lost block -->
@@ -67,13 +67,13 @@
                                 Попробуй ещё раз.
                             </p>
                         </div>
-                        <button class="btn option__reset" @click="resetGame">
-                            ИГРАТЬ ЕЩЕ
-                            <span class="loader"></span>
+                        <button class="btn option__reset" ref="$resetButton" @click="resetGame">
+                            <span v-if="!isLoading">ИГРАТЬ ЕЩЕ</span>
+                            <span class="loader" v-if="isLoading"></span>
                         </button>
                     </div>
                 </div>
-                <Robot />
+                <Robot :isWon="isWon" :isHit="isHit" />
             </div>
         </div>
     </div>
@@ -92,11 +92,13 @@ const settings = {
 };
 
 const $changer = ref(null);
+const $resetButton = ref(null)
 
 const isHit = ref(false);
 const isGameStart = ref(false);
 const isWon = ref(false);
 const isLost = ref(false);
+const isLoading = ref(false);
 
 const progressBar = ref(0);
 const updater = ref(Number);
@@ -120,8 +122,9 @@ function stopGame() {
     clearInterval(updater.value);
 }
 
-async function resetGame($event) {
-    $event.target.disabled = true;
+async function resetGame() {
+    $resetButton.value.disabled = true;
+    isLoading.value = true;
     isHit.value = false;
     await clearProgress();
     lineItems.value.forEach(element => {
@@ -129,7 +132,8 @@ async function resetGame($event) {
     });
     isWon.value = false;
     isLost.value = false;
-    $event.target.disabled = false;
+    $resetButton.value.disabled = false;
+    isLoading.value = false;
     startGame();
 }
 
@@ -213,30 +217,6 @@ function setActiveLines(progressValue) {
 
 </script>
 <style scoped>
-@keyframes rotate {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes scale {
-    0% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.2);
-    }
-
-    100% {
-        transform: scale(1);
-    }
-}
-
 .container {
     width: 360px;
     height: 640px;
@@ -251,6 +231,28 @@ function setActiveLines(progressValue) {
     align-items: center;
 }
 
+.loader {
+    width: 20px;
+    height: 20px;
+    border: 3px solid #FFF;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+    box-sizing: border-box;
+    animation: rotate 1s linear infinite;
+}
+
+.loader::after {
+    content: '';
+    position: absolute;
+    box-sizing: border-box;
+    left: 4px;
+    top: 10px;
+    border: 6px solid transparent;
+    border-right-color: #FFF;
+    transform: rotate(-40deg);
+}
 
 .option__paragraph {
     color: #FFF;
@@ -326,6 +328,24 @@ function setActiveLines(progressValue) {
     opacity: 0.3;
 }
 
+.lines {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    flex-direction: column-reverse;
+
+    gap: 2px;
+    background-image: url('./assets/images/measure_main.png');
+    background-position: center;
+    background-size: cover;
+
+
+    width: 186px;
+    padding-top: 30px;
+    padding-bottom: 2px;
+}
+
 .btn {
     text-align: center;
     font-weight: 700;
@@ -364,24 +384,6 @@ function setActiveLines(progressValue) {
 
     margin-top: 10px;
     margin-bottom: 20px;
-}
-
-.lines {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: center;
-    flex-direction: column-reverse;
-
-    gap: 2px;
-    background-image: url('./assets/images/measure_main.png');
-    background-position: center;
-    background-size: cover;
-
-
-    width: 186px;
-    padding-top: 30px;
-    padding-bottom: 2px;
 }
 
 .option__rubin {
