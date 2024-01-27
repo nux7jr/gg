@@ -56,7 +56,7 @@ module.exports = {
                 'author': 'Mihail Tretyakov',
                 'og:title': "GG",
                 'og:image': 'favicon.ico',
-                'og:url': 'fobar',
+                'og:url': 'https://gg-topaz.vercel.app/',
                 'og:site_name': 'Игра с шкалой и молотом',
             },
             template: path.resolve(__dirname, './src/template.html'),
