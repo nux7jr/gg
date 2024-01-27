@@ -36,6 +36,10 @@ module.exports = {
                 test: /\.(png|jpg|gif|svg|ico)$/i,
                 type: 'asset/resource',
             },
+            {
+                test: /\.mp3$/i,
+                type: 'asset',
+            },
         ],
 
     },

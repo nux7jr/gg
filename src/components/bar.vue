@@ -45,6 +45,7 @@ const props = defineProps({
 .bar {
     width: 48px;
     height: 100%;
+    margin-bottom: -2px;
 }
 
 .bar__svg {

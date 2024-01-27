@@ -76,10 +76,12 @@
                 <Robot :isWon="isWon" :isHit="isHit" />
             </div>
         </div>
+        <audio volume="0.4" ref="$audioPlayer" :src="winningSound"></audio>
     </div>
 </template>
 <script setup>
 
+import winningSound from './assets/sounds/winning_sound.mp3';
 import { ref, onMounted } from 'vue';
 import Bar from "./components/bar.vue";
 import Robot from "./components/robot.vue";
@@ -92,7 +94,8 @@ const settings = {
 };
 
 const $changer = ref(null);
-const $resetButton = ref(null)
+const $resetButton = ref(null);
+const $audioPlayer = ref(null)
 
 const isHit = ref(false);
 const isGameStart = ref(false);
@@ -158,6 +161,7 @@ function hitButton() {
         setActiveLines(progressBar.value)
         if (progressBar.value >= 96) {
             setTimeout(() => {
+                $audioPlayer.value.play();
                 isWon.value = true;
             }, 1000)
         } else {
