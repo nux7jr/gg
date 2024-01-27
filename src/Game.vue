@@ -11,7 +11,7 @@
         <div class="action">
             <ButtonHit @click="hitButton" :isHit="isHit" :isDisabled="!isGameStart" />
             <img class="action__hammer" :class="{ 'action__hammer--active': isHit, 'action__hammer--start': !isGameStart }"
-                src="./assets/images/hammer.svg" alt="hammer" />
+                src="./assets/images/hammer.png" alt="hammer" />
         </div>
         <div class="option">
             <Bar :progressValue="progressBar" />
@@ -288,7 +288,7 @@ function setActiveLines(progressValue) {
 .action__hammer {
     position: absolute;
     user-select: none;
-    bottom: -25px;
+    bottom: 0;
     right: -80px;
 
     transition: all 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
