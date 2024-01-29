@@ -334,7 +334,6 @@ function setActiveLines(progressValue) {
 
 .lines {
     display: flex;
-    flex-direction: column;
     justify-content: flex-end;
     align-items: center;
     flex-direction: column-reverse;
