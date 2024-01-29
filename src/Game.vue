@@ -27,7 +27,7 @@
                                 Проверим твою силу!
                             </p>
                         </div>
-                        <button class="btn option__reset" @click="startGame">НОВАЯ ИГРА</button>
+                        <button class="btn option__reset" @click.once="startGame">НОВАЯ ИГРА</button>
                     </div>
                     <!-- game changer block -->
                     <div v-if="isGameStart && !isWon && !isLost" ref="$changer" class="option__selection">
@@ -39,7 +39,7 @@
                                 в нужный момент!
                             </p>
                         </div>
-                        <button class="btn option__blow" @click="hitButton">УДАР!</button>
+                        <button class="btn option__blow" @click.once="hitButton">УДАР!</button>
                     </div>
                     <!-- win block -->
                     <div v-if="isWon" class="option__win">
@@ -52,7 +52,7 @@
                             </p>
                             <p class="option__rubin">Рубин</p>
                         </div>
-                        <button class="btn option__reset" ref="$resetButton" @click="resetGame">
+                        <button class="btn option__reset" @click.once="resetGame">
                             <span v-if="!isLoading">НОВАЯ ИГРА</span>
                             <span class="loader" v-if="isLoading"></span>
                         </button>
@@ -67,7 +67,7 @@
                                 Попробуй ещё раз.
                             </p>
                         </div>
-                        <button class="btn option__reset" ref="$resetButton" @click="resetGame">
+                        <button class="btn option__reset" @click.once="resetGame">
                             <span v-if="!isLoading">ИГРАТЬ ЕЩЕ</span>
                             <span class="loader" v-if="isLoading"></span>
                         </button>
@@ -94,7 +94,6 @@ const settings = {
 };
 
 const $changer = ref(null);
-const $resetButton = ref(null);
 const $audioPlayer = ref(null)
 
 const isHit = ref(false);
@@ -126,16 +125,14 @@ function stopGame() {
 }
 
 async function resetGame() {
-    $resetButton.value.disabled = true;
     isLoading.value = true;
-    isHit.value = false;
     await clearProgress();
+    isHit.value = false;
     lineItems.value.forEach(element => {
         element.isActive = false;
     });
     isWon.value = false;
     isLost.value = false;
-    $resetButton.value.disabled = false;
     isLoading.value = false;
     startGame();
 }
