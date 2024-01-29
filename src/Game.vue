@@ -307,6 +307,10 @@ function setActiveLines(progressValue) {
     transition: 0.3s background-color ease;
 }
 
+.lines__item:nth-child(7) {
+    border-radius: 4px 4px 0 0;
+}
+
 .lines__item::after {
     content: '';
     width: 71px;
