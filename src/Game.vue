@@ -154,7 +154,7 @@ async function hitButton() {
     isHit.value = true;
     stopGame();
     await setActiveLines(progressBar.value);
-    if (progressBar.value >= 96) {
+    if (Math.floor(progressBar.value / 15) == 6) {
         $audioPlayer.value.play();
         isWon.value = true;
     } else {
@@ -174,32 +174,11 @@ function updateProgressBar() {
 function setActiveLines(progressValue) {
     return new Promise((resolve, reject) => {
         let numberOfElements;
-        switch (true) {
-            case progressValue >= 0 && progressValue < 15:
-                numberOfElements = 0;
-                break;
-            case progressValue >= 15 && progressValue < 30:
-                numberOfElements = 1;
-                break;
-            case progressValue >= 30 && progressValue < 45:
-                numberOfElements = 2;
-                break;
-            case progressValue >= 45 && progressValue < 60:
-                numberOfElements = 3;
-                break;
-            case progressValue >= 60 && progressValue <= 75:
-                numberOfElements = 4;
-                break;
-            case progressValue >= 75 && progressValue <= 95:
-                numberOfElements = 5;
-                break;
-            case progressValue >= 95 && progressValue <= 100:
-                numberOfElements = 6;
-                break;
-            default:
-                numberOfElements = 0;
-                reject("invalid progressValue");
-                return;
+        if (progressValue >= 0 && progressValue <= 100) {
+            numberOfElements = Math.floor(progressValue / 15)
+        } else {
+            reject("invalid progressValue");
+            return;
         }
         let i = 0;
         function activateNextItem() {
