@@ -80,18 +80,11 @@
     </div>
 </template>
 <script setup>
-
+import { ref } from 'vue';
 import winningSound from './assets/sounds/winning_sound.mp3';
-import { ref, onMounted } from 'vue';
 import Bar from "./components/bar.vue";
 import Robot from "./components/robot.vue";
 import ButtonHit from "./components/buttonHit.vue";
-
-const settings = {
-    incrementAmountBar: 1,
-    directionBar: 1,
-    timerBar: 8,
-};
 
 const $changer = ref(null);
 const $audioPlayer = ref(null)
@@ -104,6 +97,12 @@ const isLoading = ref(false);
 
 const progressBar = ref(0);
 const updater = ref(Number);
+
+const settings = {
+    incrementAmountBar: 1,
+    directionBar: 1,
+    timerBar: 8,
+};
 
 const lineItems = ref([
     { itemHeight: 50, isActive: false, activeBgColor: '#00B047', basicBgColor: '#254B9D' },
@@ -128,9 +127,6 @@ async function resetGame() {
     isLoading.value = true;
     await clearProgress();
     isHit.value = false;
-    lineItems.value.forEach(element => {
-        element.isActive = false;
-    });
     isWon.value = false;
     isLost.value = false;
     isLoading.value = false;
@@ -139,6 +135,9 @@ async function resetGame() {
 
 async function clearProgress() {
     return new Promise(resolve => {
+        lineItems.value.forEach(element => {
+            element.isActive = false;
+        });
         const timeOut = setInterval(() => {
             if (progressBar.value >= 2) {
                 progressBar.value += settings.incrementAmountBar * -1;
@@ -146,25 +145,21 @@ async function clearProgress() {
                 clearInterval(timeOut);
                 resolve();
             }
-        }, 10);
+        }, settings.timerBar);
     });
 }
 
-function hitButton() {
+async function hitButton() {
     $changer.value.style.opacity = 0;
     isHit.value = true;
     stopGame();
-    setTimeout(() => {
-        setActiveLines(progressBar.value)
-        if (progressBar.value >= 96) {
-            setTimeout(() => {
-                $audioPlayer.value.play();
-                isWon.value = true;
-            }, 1000)
-        } else {
-            isLost.value = true;
-        }
-    }, 600);
+    await setActiveLines(progressBar.value);
+    if (progressBar.value >= 96) {
+        $audioPlayer.value.play();
+        isWon.value = true;
+    } else {
+        isLost.value = true;
+    }
 }
 
 function updateProgressBar() {
@@ -177,43 +172,47 @@ function updateProgressBar() {
 }
 
 function setActiveLines(progressValue) {
-    let numberOfElements;
-    switch (true) {
-        case progressValue >= 0 && progressValue < 15:
-            numberOfElements = 0;
-            break;
-        case progressValue >= 15 && progressValue < 30:
-            numberOfElements = 1;
-            break;
-        case progressValue >= 30 && progressValue < 45:
-            numberOfElements = 2;
-            break;
-        case progressValue >= 45 && progressValue < 60:
-            numberOfElements = 3;
-            break;
-        case progressValue >= 60 && progressValue <= 75:
-            numberOfElements = 4;
-            break;
-        case progressValue >= 75 && progressValue <= 95:
-            numberOfElements = 5;
-            break;
-        case progressValue >= 95 && progressValue <= 100:
-            numberOfElements = 6;
-            break;
-        default:
-            numberOfElements = 0;
-            return;
-    }
-
-    let i = 0;
-    function activateNextItem() {
-        if (i < lineItems.value.length && i <= numberOfElements) {
-            lineItems.value[i].isActive = true;
-            i++;
-            setTimeout(activateNextItem, 100);
+    return new Promise((resolve, reject) => {
+        let numberOfElements;
+        switch (true) {
+            case progressValue >= 0 && progressValue < 15:
+                numberOfElements = 0;
+                break;
+            case progressValue >= 15 && progressValue < 30:
+                numberOfElements = 1;
+                break;
+            case progressValue >= 30 && progressValue < 45:
+                numberOfElements = 2;
+                break;
+            case progressValue >= 45 && progressValue < 60:
+                numberOfElements = 3;
+                break;
+            case progressValue >= 60 && progressValue <= 75:
+                numberOfElements = 4;
+                break;
+            case progressValue >= 75 && progressValue <= 95:
+                numberOfElements = 5;
+                break;
+            case progressValue >= 95 && progressValue <= 100:
+                numberOfElements = 6;
+                break;
+            default:
+                numberOfElements = 0;
+                reject("invalid progressValue");
+                return;
         }
-    }
-    activateNextItem();
+        let i = 0;
+        function activateNextItem() {
+            if (i <= numberOfElements) {
+                lineItems.value[i].isActive = true;
+                i++;
+                setTimeout(activateNextItem, 100);
+            } else {
+                resolve();
+            }
+        }
+        activateNextItem();
+    });
 }
 
 </script>
@@ -222,7 +221,7 @@ function setActiveLines(progressValue) {
     width: 360px;
     height: 640px;
     background-image: url('./assets/images/bg_top.png');
-    background-position: center center;
+    background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
 
@@ -239,21 +238,10 @@ function setActiveLines(progressValue) {
     border-bottom-color: transparent;
     border-radius: 50%;
     display: inline-block;
-    position: relative;
     box-sizing: border-box;
-    animation: rotate 1s linear infinite;
+    animation: rotate 1.2s linear infinite;
 }
 
-.loader::after {
-    content: '';
-    position: absolute;
-    box-sizing: border-box;
-    left: 4px;
-    top: 10px;
-    border: 6px solid transparent;
-    border-right-color: #FFF;
-    transform: rotate(-40deg);
-}
 
 .option__paragraph {
     color: #FFF;
@@ -304,7 +292,7 @@ function setActiveLines(progressValue) {
     background-color: #7593D6;
     position: relative;
 
-    transition: 0.3s background-color ease;
+    transition: 0.6s background-color ease;
 }
 
 .lines__item:nth-child(7) {
@@ -343,6 +331,7 @@ function setActiveLines(progressValue) {
     background-image: url('./assets/images/measure_main.png');
     background-position: center;
     background-size: cover;
+    background-repeat: no-repeat;
 
 
     width: 186px;
@@ -351,6 +340,9 @@ function setActiveLines(progressValue) {
 }
 
 .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     font-weight: 700;
     border-radius: 5px;
