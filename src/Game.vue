@@ -242,6 +242,9 @@ function setActiveLines(progressValue) {
     animation: rotate 1.2s linear infinite;
 }
 
+.option {
+    height: 96px;
+}
 
 .option__paragraph {
     color: #FFF;
@@ -266,7 +269,7 @@ function setActiveLines(progressValue) {
 }
 
 .action {
-    margin: 6px 0;
+    margin-top: 6px;
     position: relative;
 }
 
@@ -376,11 +379,11 @@ function setActiveLines(progressValue) {
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    gap: 10px;
+    gap: 15px;
 
-    margin-top: 10px;
-    margin-bottom: 20px;
+    margin: 0 0 60px 14px;
 }
+
 
 .option__rubin {
     text-align: center;

@@ -45,10 +45,12 @@ const props = defineProps({
 .bar {
     width: 48px;
     height: 100%;
-    margin-bottom: -2px;
+    position: relative;
 }
 
 .bar__svg {
     transform: rotate(180deg);
+    position: absolute;
+    bottom: 0;
 }
 </style>
